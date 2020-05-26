@@ -82,7 +82,7 @@ function gameLoop(delta) {
     if (keys.Space) {
         bulletDelay--;
         if (bulletDelay <= 0) {
-            bulletDelay = 60;
+            bulletDelay = 20;
             dbg.innerHTML = "BANG!";
             // add a bullet
             let b = new Entity(new PIXI.Sprite(sheet.textures["bullet.png"]), player.x - 60, player.y - 10);
