@@ -1,8 +1,16 @@
 {"frames": {
 
+"bullet.png":
+{
+	"frame": {"x":0,"y":0,"w":24,"h":8},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":24,"h":8},
+	"sourceSize": {"w":24,"h":8}
+},
 "cat.png":
 {
-	"frame": {"x":0,"y":0,"w":64,"h":64},
+	"frame": {"x":24,"y":0,"w":64,"h":64},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
@@ -10,15 +18,15 @@
 },
 "chars.png":
 {
-	"frame": {"x":64,"y":0,"w":192,"h":64},
+	"frame": {"x":88,"y":0,"w":384,"h":64},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":192,"h":64},
-	"sourceSize": {"w":192,"h":64}
+	"spriteSourceSize": {"x":0,"y":0,"w":384,"h":64},
+	"sourceSize": {"w":384,"h":64}
 },
 "zk.png":
 {
-	"frame": {"x":256,"y":0,"w":64,"h":64},
+	"frame": {"x":472,"y":0,"w":64,"h":64},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
@@ -26,7 +34,7 @@
 },
 "zombie1.png":
 {
-	"frame": {"x":320,"y":0,"w":64,"h":64},
+	"frame": {"x":536,"y":0,"w":64,"h":64},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
@@ -39,8 +47,8 @@
 	"version": "1.0",
 	"image": "chars.png",
 	"format": "RGBA8888",
-	"size": {"w":384,"h":64},
+	"size": {"w":600,"h":64},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:3059a3d18feb903b61c0ee60c01c5e8a:4cc2eb5be5c9ed32f29e08a2db98b9d1:c5f87edd7a349206ca24457506206cff$"
+	"smartupdate": "$TexturePacker:SmartUpdate:7958ef3cfdc763f5d826e6c9312db520:34dcf0f8189d48b3e89a49e6f297fcc3:c5f87edd7a349206ca24457506206cff$"
 }
 }
