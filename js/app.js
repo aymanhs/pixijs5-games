@@ -111,6 +111,23 @@ function gameLoop(delta) {
             dbg.innerHTML += ` ${z.sprite.name}`;
         }
     }
+    // now check for bullet collisions
+    for (e of entities) {
+        if (e.name == "bullet") {
+            for (z of entities) {
+                if (z.sprite.name && z.sprite.name.startsWith("Zombie ")) {
+                    if (isCollide(e.sprite, z.sprite)) {
+                        const index = entities.indexOf(z);
+                        if (index > -1) {
+                            entities.splice(index, 1);
+                        }
+                        app.stage.removeChild(z.sprite);
+                        break;
+                    }
+                }
+            }
+        }
+    }
     window.requestAnimationFrame(gameLoop);
 }
 
