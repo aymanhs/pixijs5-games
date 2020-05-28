@@ -1,36 +1,64 @@
-//Create a Pixi Application
-let app = new PIXI.Application({
+// Create the Game object
+let game = new Game({
     width: 800,
     height: 500,
     antialiasing: true,
     transparent: false,
     resolution: 1
-});
+})
+
+game.load(["images/chars.json"]);
+
+game.setup = function(resources) {
+    this.sheet = resources["images/chars.json"];
+    this.resources = resources;
+    this.bulletDelay = 0;
+
+    this.player = this.Sprite("zk.png", "player", this.app.view.width/2, this.app.view.height/2);
+    this.player.vx = 0;
+    this.player.vy = 0;
+}
+
+game.update = function() {
+    this.bulletDelay--;
+    if (this.keys.ArrowUp) {
+        this.player.vy = -5;
+    } else if (this.keys.ArrowDown) {
+        this.player.vy = 5;
+    } else {
+        this.player.vy = 0;
+    }
+    if (this.keys.ArrowLeft) {
+        this.player.vx = -5;
+    } else if (this.keys.ArrowRight) {
+        this.player.vx = 5;
+    } else {
+        this.player.vx = 0;
+    }
+}
 
 let player, entities, bulletDelay;
 let dbg = document.getElementById("dbg");
 
-document.body.appendChild(app.view);
 
-let keys = {};
-let sheet;
 
 //load an image and run the `setup` function when it's done
-PIXI.loader
-    .add("images/chars.json")
-    .load(setup);
+// PIXI.loader
+//     .add("images/chars.json")
+//     .load(setup);
 
 //This `setup` function will run when the image has loaded
 function setup() {
 
-    sheet = PIXI.loader.resources["images/chars.json"];
-    bulletDelay = 0;
+    // sheet = PIXI.loader.resources["images/chars.json"];
+    // bulletDelay = 0;
 
     //Create the player sprite
     player = new PIXI.Sprite(sheet.textures["zk.png"]);
     player.name = "Player";
     player.vx = 0;
     player.vy = 0;
+
 
     // create the Game entities
     entities = [];
