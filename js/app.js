@@ -79,15 +79,15 @@ function gameLoop(delta) {
     } else {
         player.vx = 0;
     }
+    bulletDelay--;
     if (keys.Space) {
-        bulletDelay--;
         if (bulletDelay <= 0) {
-            bulletDelay = 20;
+            bulletDelay = 60;
             dbg.innerHTML = "BANG!";
             // add a bullet
             let b = new Entity(new PIXI.Sprite(sheet.textures["bullet.png"]), player.x - 60, player.y - 10);
             b.name = "bullet";
-            b.vx = -5;
+            b.vx = -15;
             b.vy = 0;
             entities.push(b);
             app.stage.addChild(b.sprite);
@@ -117,11 +117,17 @@ function gameLoop(delta) {
             for (z of entities) {
                 if (z.sprite.name && z.sprite.name.startsWith("Zombie ")) {
                     if (isCollide(e.sprite, z.sprite)) {
-                        const index = entities.indexOf(z);
+                        let index = entities.indexOf(z);
                         if (index > -1) {
                             entities.splice(index, 1);
                         }
                         app.stage.removeChild(z.sprite);
+                        // also remove the bullet
+                        app.stage.removeChild(e.sprite);
+                        index = entities.indexOf(e);
+                        if (index > -1) {
+                            entities.splice(index, 1);
+                        }                        
                         break;
                     }
                 }
