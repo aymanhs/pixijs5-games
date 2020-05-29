@@ -17,6 +17,7 @@ game.setup = function(resources) {
     this.player = this.Sprite("zk.png", "player", this.app.view.width/2, this.app.view.height/2);
     this.player.vx = 0;
     this.player.vy = 0;
+    this.player.anchor.set(0.5);
 }
 
 game.update = function() {
@@ -35,6 +36,23 @@ game.update = function() {
     } else {
         this.player.vx = 0;
     }
+    if(this.keys.Space) {
+        if(this.bulletDelay<=0) {
+            this.fire();
+        }
+    }
+}
+
+game.fire = function() {
+    this.bulletDelay = 60;
+    let b = this.Sprite("bullet.png", "bullet", this.player.x - 60, this.player.y - 10);
+    b.vx = -15;
+    b.vy = 0;
+    b.update = () => {
+        if(b.x < -50) {
+            this.app.stage.removeChild(b);
+        }
+    }    
 }
 
 let player, entities, bulletDelay;

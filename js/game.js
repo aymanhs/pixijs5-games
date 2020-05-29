@@ -10,7 +10,7 @@ class Game {
     keys;
     app;
 
-    constructor(res, options) {
+    constructor(options) {
         this.keys = {};
         this.app = new PIXI.Application(options);
         document.body.appendChild(this.app.view);
