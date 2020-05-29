@@ -9,18 +9,21 @@ let game = new Game({
 
 game.load(["images/chars.json"]);
 
-game.setup = function(resources) {
+game.setup = function (resources) {
     this.sheet = resources["images/chars.json"];
     this.resources = resources;
     this.bulletDelay = 0;
 
-    this.player = this.Sprite("zk.png", "player", this.app.view.width/2, this.app.view.height/2);
+    this.player = this.Sprite("zk.png", "player", this.app.view.width / 2, this.app.view.height / 2);
     this.player.vx = 0;
     this.player.vy = 0;
     this.player.anchor.set(0.5);
+
+    this.AddZombie();
+    this.AddZombie();
 }
 
-game.update = function() {
+game.update = function () {
     this.bulletDelay--;
     if (this.keys.ArrowUp) {
         this.player.vy = -5;
@@ -36,23 +39,44 @@ game.update = function() {
     } else {
         this.player.vx = 0;
     }
-    if(this.keys.Space) {
-        if(this.bulletDelay<=0) {
+    if (this.keys.Space) {
+        if (this.bulletDelay <= 0) {
             this.fire();
         }
     }
 }
 
-game.fire = function() {
+game.fire = function () {
     this.bulletDelay = 60;
     let b = this.Sprite("bullet.png", "bullet", this.player.x - 60, this.player.y - 10);
     b.vx = -15;
     b.vy = 0;
     b.update = () => {
-        if(b.x < -50) {
+        // check if we collided with any zombie
+        for(let z of this.app.stage.children) {
+            if(z.name == "zombie" && isCollide(b, z)) {
+                this.app.stage.removeChild(z);
+                this.app.stage.removeChild(b);
+                return;
+            }
+        }
+        if (b.x < -50) {
             this.app.stage.removeChild(b);
         }
-    }    
+    }
+}
+
+game.AddZombie = function () {
+    let x = Math.random() * 100;
+    let y = Math.random() * 100 + 200;
+    let z = this.Sprite("zombie1.png", "zombie", x, y);
+    z.update = () => {
+        let vx = game.player.x - z.x;
+        let vy = game.player.y - z.y;
+        z.vx = clip(vx * 0.02, -2, 2);
+        z.vy = clip(vy * 0.02, -2, 2);
+        
+    }
 }
 
 let player, entities, bulletDelay;
@@ -173,7 +197,7 @@ function gameLoop(delta) {
                         index = entities.indexOf(e);
                         if (index > -1) {
                             entities.splice(index, 1);
-                        }                        
+                        }
                         break;
                     }
                 }
