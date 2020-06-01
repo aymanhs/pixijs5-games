@@ -9,10 +9,18 @@ let game = new Game({
 
 let dbg = document.getElementById("dbg");
 
-
 game.load(["images/chars.json"]);
+game.scoreStyle = new PIXI.TextStyle({
+    dropShadow: true,
+    dropShadowBlur: 5,
+    dropShadowColor: "#d39797",
+    dropShadowDistance: 0,
+    fill: "#f5e0e0",
+    stroke: "#d50b0b"
+});
 
 game.setup = function (resources) {
+    this.currentScore = 0;
     this.sheet = resources["images/chars.json"];
     this.resources = resources;
     this.bulletDelay = 0;
@@ -24,10 +32,14 @@ game.setup = function (resources) {
         this.player.x += this.player.vx;
         this.player.y += this.player.vy;
     }
-    this.player.anchor.set(0.5);
+    // this.player.anchor.set(0.5);
 
     this.AddZombie();
     this.AddZombie();
+    this.scoreSprite = new PIXI.Text("Score", game.scoreStyle);
+    this.scoreSprite.x = 700;
+    this.scoreSprite.y = 20;
+    this.app.stage.addChild(this. scoreSprite);
 }
 
 game.update = function (delta) {
@@ -56,7 +68,7 @@ game.update = function (delta) {
 
 game.fire = function () {
     this.bulletDelay = 60;
-    let b = this.Object("bullet.png", "bullet", this.player.x - 60, this.player.y - 10);
+    let b = this.Object("bullet.png", "bullet", this.player.x - 10, this.player.y + 20);
     b.vx = -15;
     b.vy = 0;
     b.update = () => {
@@ -67,6 +79,8 @@ game.fire = function () {
             if (z.name == "zombie" && isCollide(b, z)) {
                 this.app.stage.removeChild(z);
                 this.app.stage.removeChild(b);
+                this.currentScore++;
+                this.scoreSprite.text = `${this.currentScore}`
                 this.AddZombie();
                 return;
             }
@@ -78,14 +92,15 @@ game.fire = function () {
 }
 
 game.AddZombie = function () {
-    let x = Math.random() * 100;
-    let y = Math.random() * 100 + 200;
+    let x = Math.random() * 100 - 200;
+    let y = Math.random() * this.app.view.height;
     let z = this.Object("zombie1.png", "zombie", x, y);
     z.update = () => {
         let vx = game.player.x - z.x;
         let vy = game.player.y - z.y;
         z.vx = clip(vx * 0.02, -2, 2);
         z.vy = clip(vy * 0.02, -2, 2);
+        // z.anchor.set(0.5);
         z.x += z.vx;
         z.y += z.vy;
     }
