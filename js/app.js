@@ -7,6 +7,9 @@ let game = new Game({
     resolution: 1
 })
 
+let dbg = document.getElementById("dbg");
+
+
 game.load(["images/chars.json"]);
 
 game.setup = function (resources) {
@@ -14,16 +17,21 @@ game.setup = function (resources) {
     this.resources = resources;
     this.bulletDelay = 0;
 
-    this.player = this.Sprite("zk.png", "player", this.app.view.width / 2, this.app.view.height / 2);
+    this.player = this.Object("zk.png", "player", this.app.view.width / 2, this.app.view.height / 2);
     this.player.vx = 0;
     this.player.vy = 0;
+    this.player.update = () => {
+        this.player.x += this.player.vx;
+        this.player.y += this.player.vy;
+    }
     this.player.anchor.set(0.5);
 
     this.AddZombie();
     this.AddZombie();
 }
 
-game.update = function () {
+game.update = function (delta) {
+    // dbg.innerHTML = `${delta}`;
     this.bulletDelay--;
     if (this.keys.ArrowUp) {
         this.player.vy = -5;
@@ -48,15 +56,18 @@ game.update = function () {
 
 game.fire = function () {
     this.bulletDelay = 60;
-    let b = this.Sprite("bullet.png", "bullet", this.player.x - 60, this.player.y - 10);
+    let b = this.Object("bullet.png", "bullet", this.player.x - 60, this.player.y - 10);
     b.vx = -15;
     b.vy = 0;
     b.update = () => {
         // check if we collided with any zombie
-        for(let z of this.app.stage.children) {
-            if(z.name == "zombie" && isCollide(b, z)) {
+        b.x += b.vx;
+        b.y += b.vy;
+        for (let z of this.app.stage.children) {
+            if (z.name == "zombie" && isCollide(b, z)) {
                 this.app.stage.removeChild(z);
                 this.app.stage.removeChild(b);
+                this.AddZombie();
                 return;
             }
         }
@@ -69,143 +80,17 @@ game.fire = function () {
 game.AddZombie = function () {
     let x = Math.random() * 100;
     let y = Math.random() * 100 + 200;
-    let z = this.Sprite("zombie1.png", "zombie", x, y);
+    let z = this.Object("zombie1.png", "zombie", x, y);
     z.update = () => {
         let vx = game.player.x - z.x;
         let vy = game.player.y - z.y;
         z.vx = clip(vx * 0.02, -2, 2);
         z.vy = clip(vy * 0.02, -2, 2);
-        
+        z.x += z.vx;
+        z.y += z.vy;
     }
 }
 
-let player, entities, bulletDelay;
-let dbg = document.getElementById("dbg");
-
-
-
-//load an image and run the `setup` function when it's done
-// PIXI.loader
-//     .add("images/chars.json")
-//     .load(setup);
-
-//This `setup` function will run when the image has loaded
-function setup() {
-
-    // sheet = PIXI.loader.resources["images/chars.json"];
-    // bulletDelay = 0;
-
-    //Create the player sprite
-    player = new PIXI.Sprite(sheet.textures["zk.png"]);
-    player.name = "Player";
-    player.vx = 0;
-    player.vy = 0;
-
-
-    // create the Game entities
-    entities = [];
-    for (let i = 0; i < 3; i++) {
-        let zombie = new Entity(new PIXI.Sprite(sheet.textures["zombie1.png"]), 30 + i * 100, 30 - 100 * i);
-        zombie.vy = 1;
-        zombie.sprite.name = `Zombie ${i}`;
-        zombie.maxy = app.view.height - 100;
-        entities.push(zombie);
-    }
-
-    //Add the player to the stage
-    app.stage.addChild(player);
-    entities.forEach(z => app.stage.addChild(z.sprite));
-
-    player.anchor.set(0.5);
-
-    player.x = app.view.width / 2;
-    player.y = app.view.height / 2;
-    keyDiv = document.getElementById("keyDiv");
-
-    window.addEventListener("keyup", k => {
-        keys[k.code] = false;
-    })
-
-    window.addEventListener("keydown", k => {
-        keys[k.code] = true;
-    })
-
-    window.requestAnimationFrame(gameLoop);
-}
-
-function gameLoop(delta) {
-
-    if (keys.ArrowUp) {
-        player.vy = -5;
-    } else if (keys.ArrowDown) {
-        player.vy = 5;
-    } else {
-        player.vy = 0;
-    }
-    if (keys.ArrowLeft) {
-        player.vx = -5;
-    } else if (keys.ArrowRight) {
-        player.vx = 5;
-    } else {
-        player.vx = 0;
-    }
-    bulletDelay--;
-    if (keys.Space) {
-        if (bulletDelay <= 0) {
-            bulletDelay = 60;
-            dbg.innerHTML = "BANG!";
-            // add a bullet
-            let b = new Entity(new PIXI.Sprite(sheet.textures["bullet.png"]), player.x - 60, player.y - 10);
-            b.name = "bullet";
-            b.vx = -15;
-            b.vy = 0;
-            entities.push(b);
-            app.stage.addChild(b.sprite);
-        }
-    } else {
-        dbg.innerHTML = "Move";
-    }
-    if (keys.ShiftLeft) {
-        player.vx *= 2;
-        player.vy *= 2;
-    }
-
-    player.x = clip(player.x + player.vx, 0, app.view.width);
-    player.y = clip(player.y + player.vy, 0, app.view.height);
-    entities.forEach(z => z.update());
-    // check collission with any zombie
-    // dbg.innerHTML = "Hits:";
-    for (z of entities) {
-        if (isCollide(player, z.sprite)) {
-            z.dead = true;
-            dbg.innerHTML += ` ${z.sprite.name}`;
-        }
-    }
-    // now check for bullet collisions
-    for (e of entities) {
-        if (e.name == "bullet") {
-            for (z of entities) {
-                if (z.sprite.name && z.sprite.name.startsWith("Zombie ")) {
-                    if (isCollide(e.sprite, z.sprite)) {
-                        let index = entities.indexOf(z);
-                        if (index > -1) {
-                            entities.splice(index, 1);
-                        }
-                        app.stage.removeChild(z.sprite);
-                        // also remove the bullet
-                        app.stage.removeChild(e.sprite);
-                        index = entities.indexOf(e);
-                        if (index > -1) {
-                            entities.splice(index, 1);
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    window.requestAnimationFrame(gameLoop);
-}
 
 function clip(x, mn, mx) {
     if (x < mn) {

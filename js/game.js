@@ -9,6 +9,7 @@ function stackDepth() {
 class Game {
     keys;
     app;
+    tick;
 
     constructor(options) {
         this.keys = {};
@@ -25,26 +26,27 @@ class Game {
             this._addKeyListeners();
             // and then do setup for the actual game
             this.setup(resources);
-            this._gameLoop();
+            this._gameLoop(0);
         });
     }
 
-    _gameLoop() {
-        // update all sprites
+    _gameLoop(ts) {
+        if(!this.tick) {
+            this.tick = ts;
+        }
+        let delta = ts - this.tick;
+        this.tick = ts;
+        // update the game object
+        this.update(delta);
+        // then ask all sprites to update
         this.app.stage.children.forEach(child => {
-            if (child.vx) {
-                child.x += child.vx;
-            }
-            if (child.vy) {
-                child.y += child.vy;
-            }
             if (child.update) {
-                child.update();
+                child.update(delta);
             }
         });
-        this.update();
-        window.requestAnimationFrame(() => {
-            this._gameLoop();
+        // and loop for the next frame
+        window.requestAnimationFrame((ts) => {
+            this._gameLoop(ts);
         });
     }
 
@@ -58,7 +60,7 @@ class Game {
         })
     }
 
-    Sprite(txture, name, x, y) {
+    Object(txture, name, x, y) {
         let s = new PIXI.Sprite(this.sheet.textures[txture])
         s.name = name;
         s.x = x;
