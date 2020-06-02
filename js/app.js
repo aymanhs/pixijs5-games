@@ -117,10 +117,12 @@ function clip(x, mn, mx) {
     }
 }
 
-function isCollide(a, b) {
-    if (!a instanceof PIXI.Sprite || !b instanceof PIXI.Sprite) {
+function isCollide(sa, sb) {
+    if (!sa.getBounds || !sb.getBounds) {
         return false;
     }
+    const a = sa.getBounds(true);
+    const b = sb.getBounds(true);
     return !(
         ((a.y + a.height) < (b.y)) ||
         (a.y > (b.y + b.height)) ||
