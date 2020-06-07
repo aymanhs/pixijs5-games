@@ -73,6 +73,7 @@ game.fire = function () {
     let b = this.Object("bullet.png", "bullet", this.player.x - 10, this.player.y + 20);
     b.vx = -15;
     b.vy = 0;
+    b.filters = [new PIXI.filters.GlowFilter()];
     bang.play();
     b.update = () => {
         // check if we collided with any zombie
@@ -80,6 +81,7 @@ game.fire = function () {
         b.y += b.vy;
         for (let z of this.app.stage.children) {
             if (z.name == "zombie" && isCollide(b, z)) {
+                // z.filters = [new PIXI.filters.DotFilter()];
                 this.app.stage.removeChild(z);
                 this.app.stage.removeChild(b);
                 this.currentScore++;
