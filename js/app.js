@@ -8,6 +8,8 @@ let game = new Game({
 })
 
 let dbg = document.getElementById("dbg");
+// let bang = new Audio("pew.mp3");
+let bang = PIXI.sound.Sound.from('pew.mp3');
 
 game.load(["images/chars.json"]);
 game.scoreStyle = new PIXI.TextStyle({
@@ -67,10 +69,11 @@ game.update = function (delta) {
 }
 
 game.fire = function () {
-    this.bulletDelay = 60;
+    this.bulletDelay = 10;
     let b = this.Object("bullet.png", "bullet", this.player.x - 10, this.player.y + 20);
     b.vx = -15;
     b.vy = 0;
+    bang.play();
     b.update = () => {
         // check if we collided with any zombie
         b.x += b.vx;
