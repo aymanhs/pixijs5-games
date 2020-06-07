@@ -41,6 +41,10 @@ game.setup = function (resources) {
     this.scoreSprite = new PIXI.Text("Score", game.scoreStyle);
     this.scoreSprite.x = 700;
     this.scoreSprite.y = 20;
+    this.scoreSprite.filters = [new PIXI.filters.GlowFilter({
+        color:0x660000,
+        outerStrength:6,
+    })];
     this.app.stage.addChild(this. scoreSprite);
 }
 
@@ -73,7 +77,7 @@ game.fire = function () {
     let b = this.Object("bullet.png", "bullet", this.player.x - 10, this.player.y + 20);
     b.vx = -15;
     b.vy = 0;
-    b.filters = [new PIXI.filters.GlowFilter()];
+    // b.filters = [new PIXI.filters.GlowFilter()];
     bang.play();
     b.update = () => {
         // check if we collided with any zombie
